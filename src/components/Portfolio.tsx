@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import {
   Menu, X, ArrowRight, MapPin, Linkedin, Instagram, Mail,
-  GraduationCap, Users, Trophy, Calendar, Sparkles, Palette,
-  Brain, Lightbulb, PenTool, Megaphone, Quote, Music2,
+  GraduationCap, Users, Trophy, Calendar, Sparkles,
+  Brain, PenTool, Quote, Music2, Sun, Moon,
 } from "lucide-react";
 import shonibareAsset from "@/assets/shonibare.jpg.asset.json";
 
@@ -14,6 +14,22 @@ const NAV = [
   { href: "#projects", label: "Projects" },
   { href: "#contact", label: "Contact" },
 ];
+
+function useTheme() {
+  const [theme, setTheme] = useState<"light" | "dark">("dark");
+  useEffect(() => {
+    const stored = (typeof window !== "undefined" && localStorage.getItem("theme")) as "light" | "dark" | null;
+    const initial = stored ?? "dark";
+    setTheme(initial);
+  }, []);
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === "dark") root.classList.add("dark");
+    else root.classList.remove("dark");
+    try { localStorage.setItem("theme", theme); } catch {}
+  }, [theme]);
+  return { theme, toggle: () => setTheme((t) => (t === "dark" ? "light" : "dark")) };
+}
 
 function useReveal() {
   useEffect(() => {
@@ -27,11 +43,11 @@ function useReveal() {
   }, []);
 }
 
-function Navbar() {
+function Navbar({ theme, toggle }: { theme: "light" | "dark"; toggle: () => void }) {
   const [open, setOpen] = useState(false);
   return (
-    <nav className="fixed top-0 inset-x-0 z-50 backdrop-blur-xl bg-background/75 border-b border-border">
-      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+    <nav className="fixed top-0 inset-x-0 z-50 backdrop-blur-xl bg-background/80 border-b border-border">
+      <div className="container-narrow h-16 flex items-center justify-between">
         <a href="#" className="font-display text-base tracking-tight">
           Analytical <span className="text-accent">Scholar</span>
         </a>
@@ -42,13 +58,25 @@ function Navbar() {
             </a>
           ))}
         </div>
-        <button onClick={() => setOpen((o) => !o)} aria-label="Menu" className="md:hidden h-9 w-9 grid place-items-center rounded-full border border-border">
-          {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={toggle}
+            aria-label="Toggle theme"
+            className="h-9 w-9 grid place-items-center rounded-full border border-border text-foreground hover:border-accent hover:text-accent transition-colors"
+          >
+            {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </button>
+          <a href="#contact" className="hidden md:inline-flex items-center gap-1.5 rounded-full bg-accent text-white px-4 py-2 text-sm font-medium hover:opacity-90 transition">
+            Let's Connect
+          </a>
+          <button onClick={() => setOpen((o) => !o)} aria-label="Menu" className="md:hidden h-9 w-9 grid place-items-center rounded-full border border-border">
+            {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          </button>
+        </div>
       </div>
       {open && (
         <div className="md:hidden border-t border-border bg-background">
-          <div className="px-6 py-4 flex flex-col gap-3">
+          <div className="container-narrow py-4 flex flex-col gap-3">
             {NAV.map((n) => (
               <a key={n.href} href={n.href} onClick={() => setOpen(false)} className="text-sm text-muted hover:text-foreground">
                 {n.label}
@@ -63,29 +91,30 @@ function Navbar() {
 
 function Hero() {
   return (
-    <section className="relative pt-32 pb-20">
-      <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-[1.4fr_1fr] gap-14 items-center">
-        <div className="space-y-6">
+    <section className="pt-24 md:pt-28 pb-12 md:pb-16">
+      <div className="container-narrow grid grid-cols-1 md:grid-cols-[60%_40%] gap-10 items-center">
+        <div className="space-y-4">
           <p className="text-sm text-muted">Hello, I'm</p>
-          <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl leading-[1.05]">
+          <h1 className="font-display text-4xl sm:text-5xl md:text-6xl leading-[1.05]">
             Shonibare AbdulGhaffar
           </h1>
-          <p className="font-display text-xl sm:text-2xl text-accent">Analytical Scholar</p>
-          <p className="text-sm sm:text-base text-muted">
-            300-Level Chemistry Student at LASUED · AI Development Trainee at BELIGHT TECH · Graphic Designer
-          </p>
-          <div className="space-y-4 text-foreground/85 leading-relaxed max-w-xl">
-            <p>
-              I'm currently learning AI development while studying Chemistry at LASUED.
-              Alongside my studies, I've explored graphic design, student leadership, and
-              digital tools that improve productivity and solve everyday problems.
-            </p>
-            <p>
-              This portfolio shares my academic journey, leadership experience, and the skills
-              I'm developing as I continue learning and growing.
+          <div className="border-l-2 border-accent pl-3">
+            <p className="font-display text-2xl md:text-3xl font-semibold text-accent leading-tight">
+              Analytical Scholar
             </p>
           </div>
-          <div className="flex flex-wrap gap-3 pt-2">
+          <p className="text-base md:text-lg font-semibold text-foreground/90 leading-snug max-w-xl">
+            300-Level Chemistry Student at <span className="text-accent">LASUED</span>
+            <span className="text-muted font-normal"> | </span>
+            AI Development Trainee at <span className="text-accent">BELIGHT TECH</span>
+            <span className="text-muted font-normal"> | </span>
+            <span className="text-accent">Graphic Designer</span>
+          </p>
+          <p className="text-foreground/80 leading-relaxed max-w-xl">
+            I'm learning AI development while studying Chemistry. Alongside my studies, I
+            explore graphic design, student leadership, and digital tools that help me grow.
+          </p>
+          <div className="flex flex-wrap gap-3 pt-1">
             <a href="#contact" className="inline-flex items-center gap-2 rounded-full bg-accent text-white px-5 py-2.5 text-sm font-medium hover:opacity-90 transition">
               Let's Connect <ArrowRight className="h-4 w-4" />
             </a>
@@ -93,7 +122,7 @@ function Hero() {
               Explore My Journey
             </a>
           </div>
-          <div className="flex flex-wrap items-center gap-5 pt-3">
+          <div className="flex flex-wrap items-center gap-5 pt-1">
             <a href="https://linkedin.com" aria-label="LinkedIn" className="text-muted hover:text-accent transition"><Linkedin className="h-4 w-4" /></a>
             <a href="https://instagram.com/analytical_scholar" aria-label="Instagram" className="text-muted hover:text-accent transition"><Instagram className="h-4 w-4" /></a>
             <a href="https://tiktok.com/@analytical_scholar" aria-label="TikTok" className="text-muted hover:text-accent transition"><Music2 className="h-4 w-4" /></a>
@@ -103,12 +132,9 @@ function Hero() {
           </div>
         </div>
 
-        <div className="flex justify-center lg:justify-end">
-          <div className="relative">
-            <div className="absolute -inset-1 rounded-full" style={{ background: "rgba(26,111,255,0.18)", filter: "blur(24px)" }} />
-            <div className="relative h-64 w-64 sm:h-80 sm:w-80 rounded-full overflow-hidden border border-border ring-1 ring-accent/30">
-              <img src={shonibareAsset.url} alt="Shonibare AbdulGhaffar" className="h-full w-full object-cover" />
-            </div>
+        <div className="flex md:justify-end justify-start">
+          <div className="relative h-56 w-56 md:h-64 md:w-64 rounded-full overflow-hidden border border-border ring-1 ring-accent/20">
+            <img src={shonibareAsset.url} alt="Shonibare AbdulGhaffar" className="h-full w-full object-cover" />
           </div>
         </div>
       </div>
@@ -116,13 +142,21 @@ function Hero() {
   );
 }
 
+function SectionTitle({ eyebrow, title }: { eyebrow: string; title: string }) {
+  return (
+    <div className="reveal">
+      <p className="text-xs tracking-widest uppercase text-accent font-medium">{eyebrow}</p>
+      <h2 className="font-display text-3xl sm:text-4xl mt-2">{title}</h2>
+    </div>
+  );
+}
+
 function About() {
   return (
-    <section id="about" className="py-20 border-t border-border">
-      <div className="max-w-3xl mx-auto px-6 reveal">
-        <p className="text-xs tracking-widest uppercase text-accent font-medium">About</p>
-        <h2 className="font-display text-3xl sm:text-4xl mt-3">About Me</h2>
-        <div className="mt-6 space-y-5 text-foreground/85 leading-relaxed">
+    <section id="about" className="py-14 md:py-16 border-t border-border">
+      <div className="container-narrow">
+        <SectionTitle eyebrow="About" title="About Me" />
+        <div className="mt-6 space-y-4 text-foreground/85 leading-relaxed max-w-2xl">
           <p>My name is Shonibare AbdulGhaffar, and most people know me as Analytical Scholar.</p>
           <p>
             I'm a 300-level Chemistry student at Lagos State University of Education (LASUED).
@@ -133,18 +167,22 @@ function About() {
             through my training at BELIGHT TECH.
           </p>
           <p>
-            I enjoy learning practical skills, taking on responsibilities, and working on projects
-            that help me grow personally and professionally.
-          </p>
-          <p>
             I believe meaningful growth comes from staying curious, embracing challenges, and
             consistently improving every day.
           </p>
         </div>
+      </div>
+    </section>
+  );
+}
 
-        <div className="mt-10 p-6 rounded-xl bg-card border border-border">
-          <p className="text-xs tracking-widest uppercase text-accent font-medium">Beyond Academics</p>
-          <p className="mt-3 text-foreground/85 leading-relaxed">
+function Beyond() {
+  return (
+    <section className="py-14 md:py-16 border-t border-border">
+      <div className="container-narrow">
+        <SectionTitle eyebrow="Personal" title="Beyond Academics" />
+        <div className="mt-6 p-6 rounded-xl bg-card border border-border max-w-2xl">
+          <p className="text-foreground/85 leading-relaxed">
             When I'm not studying Chemistry or learning AI development, I spend time designing
             graphics, exploring new digital tools, participating in student leadership activities,
             and continuously improving my skills.
@@ -163,16 +201,13 @@ const ROLES = [
 
 function Leadership() {
   return (
-    <section id="leadership" className="py-20 border-t border-border">
-      <div className="max-w-6xl mx-auto px-6">
-        <div className="reveal max-w-2xl">
-          <p className="text-xs tracking-widest uppercase text-accent font-medium">Leadership</p>
-          <h2 className="font-display text-3xl sm:text-4xl mt-3">Roles I currently hold.</h2>
-        </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-10">
+    <section id="leadership" className="py-14 md:py-16 border-t border-border">
+      <div className="container-narrow">
+        <SectionTitle eyebrow="Leadership" title="Roles I currently hold" />
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-5 mt-8">
           {ROLES.map((r) => (
-            <div key={r.title} className="reveal p-6 rounded-xl bg-card border border-border hover:border-accent/40 transition-colors">
-              <div className="h-10 w-10 grid place-items-center rounded-lg" style={{ background: "rgba(26,111,255,0.12)" }}>
+            <div key={r.title} className="reveal p-6 rounded-xl bg-card border border-border hover:border-accent/40 transition-colors flex flex-col h-full">
+              <div className="h-10 w-10 grid place-items-center rounded-lg" style={{ background: "rgba(26,111,255,0.10)" }}>
                 <r.icon className="h-5 w-5 text-accent" />
               </div>
               <div className="font-display text-lg mt-4">{r.title}</div>
@@ -195,22 +230,18 @@ const TIMELINE = [
 
 function Journey() {
   return (
-    <section id="journey" className="py-20 border-t border-border">
-      <div className="max-w-3xl mx-auto px-6">
-        <div className="reveal">
-          <p className="text-xs tracking-widest uppercase text-accent font-medium">Timeline</p>
-          <h2 className="font-display text-3xl sm:text-4xl mt-3">My Journey</h2>
-        </div>
-        <div className="relative mt-10 pl-8">
-          <div className="absolute left-2 top-2 bottom-2 w-px bg-accent/30" />
-          <div className="space-y-8">
+    <section id="journey" className="py-14 md:py-16 border-t border-border">
+      <div className="container-narrow">
+        <SectionTitle eyebrow="Timeline" title="My Journey" />
+        <div className="relative mt-8 pl-6 border-l border-border max-w-2xl">
+          <div className="space-y-7">
             {TIMELINE.map((t, i) => (
               <div key={i} className="relative reveal">
-                <span className="absolute -left-[26px] top-1.5 h-3 w-3 rounded-full bg-accent ring-4 ring-background" />
+                <span className="absolute -left-[27px] top-1.5 h-2.5 w-2.5 rounded-full bg-accent ring-4 ring-background" />
                 <div className="flex items-center gap-2 text-xs text-muted">
                   <Calendar className="h-3.5 w-3.5" /> {t.date}
                 </div>
-                <p className="text-foreground/90 mt-1.5 leading-relaxed">{t.title}</p>
+                <p className="text-foreground/90 mt-1 leading-relaxed">{t.title}</p>
               </div>
             ))}
           </div>
@@ -224,12 +255,11 @@ const SKILLS = ["AI Tools", "Prompt Engineering", "Graphic Design", "Digital Pro
 
 function Learning() {
   return (
-    <section id="learning" className="py-20 border-t border-border">
-      <div className="max-w-4xl mx-auto px-6 space-y-14">
-        <div className="reveal">
-          <p className="text-xs tracking-widest uppercase text-accent font-medium">Currently Learning</p>
-          <h2 className="font-display text-3xl sm:text-4xl mt-3">Skills I'm building on.</h2>
-          <div className="flex flex-wrap gap-2 mt-7">
+    <section id="learning" className="py-14 md:py-16 border-t border-border">
+      <div className="container-narrow space-y-12">
+        <div>
+          <SectionTitle eyebrow="Currently Learning" title="Skills I'm building on" />
+          <div className="flex flex-wrap gap-2 mt-6">
             {SKILLS.map((s) => (
               <span key={s} className="text-sm px-4 py-2 rounded-full bg-card border border-border text-foreground/85 hover:border-accent hover:text-accent transition-colors">
                 {s}
@@ -238,20 +268,23 @@ function Learning() {
           </div>
         </div>
 
-        <blockquote className="reveal relative p-7 rounded-xl bg-card border border-border">
-          <Quote className="absolute -top-3 left-6 h-6 w-6 text-accent bg-background p-1" />
-          <p className="font-display text-xl sm:text-2xl text-foreground leading-snug">
+        <blockquote className="reveal relative p-6 rounded-xl bg-card border border-border max-w-2xl">
+          <Quote className="absolute -top-3 left-5 h-6 w-6 text-accent bg-background p-1" />
+          <p className="font-display text-lg sm:text-xl text-foreground leading-snug">
             "Growth comes from staying curious and showing up consistently."
           </p>
         </blockquote>
 
-        <div className="reveal p-7 rounded-xl border border-accent/30" style={{ background: "rgba(26,111,255,0.06)" }}>
-          <p className="text-xs tracking-widest uppercase text-accent font-medium">Current Training</p>
-          <h3 className="font-display text-2xl mt-3">BELIGHT TECH</h3>
-          <p className="text-sm text-foreground/80 mt-1">AI Development Trainee · Started June 2026</p>
-          <p className="text-muted mt-4 leading-relaxed">
-            Learning practical AI tools, prompt engineering, and digital solution building.
-          </p>
+        <div>
+          <SectionTitle eyebrow="Current Training" title="Where I'm training" />
+          <div className="reveal mt-6 p-6 rounded-xl border border-border bg-card border-l-4 border-l-accent max-w-2xl">
+            <h3 className="font-display text-xl">BELIGHT TECH</h3>
+            <p className="text-sm text-foreground/85 mt-1">AI Development Trainee</p>
+            <p className="text-xs text-muted mt-1">Started June 2026</p>
+            <p className="text-sm text-muted mt-4 leading-relaxed">
+              Learning practical AI tools, prompt engineering, and digital solution building.
+            </p>
+          </div>
         </div>
       </div>
     </section>
@@ -259,27 +292,26 @@ function Learning() {
 }
 
 const PROJECTS = [
-  { icon: Sparkles, title: "Personal Portfolio Website", desc: "Building a professional online portfolio using modern web technologies and AI-assisted development tools." },
-  { icon: PenTool, title: "Graphic Design Collection", desc: "Event flyers, social media graphics, branding materials, and visual content projects." },
-  { icon: Brain, title: "AI Learning Experiments", desc: "Practicing prompt engineering, productivity workflows, and digital problem-solving using AI tools." },
+  { icon: Sparkles, title: "Personal Portfolio Website", desc: "Building a professional online portfolio to share my academic journey, leadership experience, and the skills I'm developing." },
+  { icon: PenTool, title: "Graphic Design Collection", desc: "An ongoing collection of event flyers, social media graphics, and visual content I've worked on over time." },
+  { icon: Brain, title: "AI Learning Experiments", desc: "Small practice projects exploring prompt engineering, productivity workflows, and digital problem-solving with AI tools." },
 ];
 
 function Projects() {
   return (
-    <section id="projects" className="py-20 border-t border-border">
-      <div className="max-w-6xl mx-auto px-6">
-        <div className="reveal max-w-2xl">
-          <p className="text-xs tracking-widest uppercase text-accent font-medium">Projects</p>
-          <h2 className="font-display text-3xl sm:text-4xl mt-3">Learning Projects</h2>
-        </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-10">
+    <section id="projects" className="py-14 md:py-16 border-t border-border">
+      <div className="container-narrow">
+        <SectionTitle eyebrow="Projects" title="Learning Projects" />
+        <div className="grid md:grid-cols-2 gap-5 mt-8">
           {PROJECTS.map((p) => (
             <div key={p.title} className="reveal p-6 rounded-xl bg-card border border-border hover:border-accent/40 transition-colors">
-              <div className="h-10 w-10 grid place-items-center rounded-lg" style={{ background: "rgba(26,111,255,0.12)" }}>
-                <p.icon className="h-5 w-5 text-accent" />
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 grid place-items-center rounded-lg" style={{ background: "rgba(26,111,255,0.10)" }}>
+                  <p.icon className="h-5 w-5 text-accent" />
+                </div>
+                <div className="font-display text-lg">{p.title}</div>
               </div>
-              <div className="font-display text-lg mt-4">{p.title}</div>
-              <p className="text-sm text-muted mt-3 leading-relaxed">{p.desc}</p>
+              <p className="text-sm text-muted mt-4 leading-relaxed">{p.desc}</p>
             </div>
           ))}
         </div>
@@ -297,19 +329,18 @@ const CONTACTS = [
 
 function Contact() {
   return (
-    <section id="contact" className="py-20 border-t border-border">
-      <div className="max-w-3xl mx-auto px-6 reveal">
-        <p className="text-xs tracking-widest uppercase text-accent font-medium">Contact</p>
-        <h2 className="font-display text-3xl sm:text-4xl mt-3">Let's Connect</h2>
-        <p className="text-foreground/85 mt-5 leading-relaxed max-w-2xl">
+    <section id="contact" className="py-14 md:py-16 border-t border-border">
+      <div className="container-narrow">
+        <SectionTitle eyebrow="Contact" title="Let's Connect" />
+        <p className="text-foreground/85 mt-4 leading-relaxed max-w-2xl">
           Interested in collaboration, internships, design projects, or conversations about
           technology and innovation? I'd be glad to connect.
         </p>
-        <div className="grid sm:grid-cols-2 gap-4 mt-10">
+        <div className="mt-8 flex flex-col gap-3 max-w-xl">
           {CONTACTS.map((c) => (
-            <a key={c.label} href={c.href} className="group flex items-center gap-4 p-5 rounded-xl bg-card border border-border hover:border-accent/50 transition-colors">
-              <div className="h-10 w-10 grid place-items-center rounded-lg" style={{ background: "rgba(26,111,255,0.12)" }}>
-                <c.icon className="h-5 w-5 text-accent" />
+            <a key={c.label} href={c.href} className="group flex items-center gap-4 p-4 rounded-xl bg-card border border-border hover:border-accent/50 transition-colors">
+              <div className="h-9 w-9 grid place-items-center rounded-lg shrink-0" style={{ background: "rgba(26,111,255,0.10)" }}>
+                <c.icon className="h-4 w-4 text-accent" />
               </div>
               <div className="min-w-0">
                 <div className="text-xs uppercase tracking-widest text-muted">{c.label}</div>
@@ -325,27 +356,24 @@ function Contact() {
 
 function Footer() {
   return (
-    <footer className="border-t border-border py-10">
-      <div className="max-w-6xl mx-auto px-6 text-center space-y-2">
-        <p className="text-sm text-foreground">© 2026 Shonibare AbdulGhaffar</p>
-        <p className="text-sm text-accent font-display">Analytical Scholar</p>
-        <p className="text-xs text-muted">Chemistry Student • AI Development Trainee • Graphic Designer</p>
+    <footer className="border-t border-border py-8">
+      <div className="container-narrow text-center">
+        <p className="text-xs text-muted">© 2026 Shonibare AbdulGhaffar · Analytical Scholar</p>
       </div>
     </footer>
   );
 }
 
 export default function Portfolio() {
+  const { theme, toggle } = useTheme();
   useReveal();
-  useEffect(() => {
-    document.documentElement.classList.add("dark");
-  }, []);
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Navbar />
+      <Navbar theme={theme} toggle={toggle} />
       <main>
         <Hero />
         <About />
+        <Beyond />
         <Leadership />
         <Journey />
         <Learning />
