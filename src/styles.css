@@ -31,12 +31,12 @@
 }
 
 .dark {
-  --background: #08090f;
+  --background: #070B14;
   --foreground: #f0f2ff;
-  --card: #0d1120;
-  --muted: #6b7494;
-  --accent: #1a6fff;
-  --border: #1a2040;
+  --card: #0d1424;
+  --muted: #7682a3;
+  --accent: #3b82f6;
+  --border: #1a2138;
 }
 
 @layer base {
