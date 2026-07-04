@@ -4,7 +4,7 @@ import {
   GraduationCap, Users, Trophy, Calendar, Sparkles,
   Brain, PenTool, Quote, Music2, Sun, Moon,
 } from "lucide-react";
-import shonibareAsset from "@/assets/shonibare.jpg.asset.json";
+import shonibareImg from "@/assets/shonibare.jpg";
 
 const NAV = [
   { href: "#about", label: "About" },
@@ -134,7 +134,7 @@ function Hero() {
 
         <div className="flex md:justify-end justify-start">
           <div className="relative h-56 w-56 md:h-64 md:w-64 rounded-full overflow-hidden border border-border ring-1 ring-accent/20">
-            <img src={shonibareAsset.url} alt="Shonibare AbdulGhaffar" className="h-full w-full object-cover" />
+            <img src={shonibareImg} alt="Shonibare AbdulGhaffar" className="h-full w-full object-cover" />
           </div>
         </div>
       </div>
