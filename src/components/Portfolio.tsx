@@ -4,7 +4,7 @@ import {
   GraduationCap, Users, Trophy, Calendar, Sparkles,
   Brain, PenTool, Quote, Music2, Sun, Moon,
 } from "lucide-react";
-import shonibareAsset from "@/assets/shonibare.jpg.asset.json";
+import shonibareImg from "@/assets/shonibare.jpg";
 
 const NAV = [
   { href: "#about", label: "About" },
